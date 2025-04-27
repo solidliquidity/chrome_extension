@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stock Trends Analyzer</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      width: 500px;
+      max-height: 600px;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 15px;
+    }
+    h1 {
+      font-size: 18px;
+      margin-top: 0;
+    }
+    .no-data {
+      color: #666;
+      font-style: italic;
+    }
+    .stock-container {
+      margin-bottom: 20px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      padding: 10px;
+    }
+    .stock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .stock-title {
+      font-weight: bold;
+      font-size: 16px;
+      margin: 0;
+    }
+    .chart-container {
+      height: 250px;
+      position: relative;
+    }
+    .error-message {
+      color: #d9534f;
+      padding: 10px;
+      background-color: #f9f2f2;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stock Trends Analysis</h1>
+  <div id="loading">Loading stock data...</div>
+  <div id="stocks-container"></div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

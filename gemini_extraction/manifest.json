@@ -1,0 +1,25 @@
+{
+    "manifest_version": 3,
+    "name": "Sun271115",
+    "version": "1.0",
+    "description": "Analyzes stock mentions in financial pages and shows price/Google Trends correlations",
+    "permissions": ["activeTab", "storage", "scripting"],
+    "host_permissions": ["https://*/", "http://localhost:*/"],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icons/apple-touch-icon.png",
+        "48": "icons/Artboard.png",
+        "128": "icons/fab.png"
+      }
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["*://*.hl.co.uk/*", "*://*.ft.com/*", "*://*.marketwatch.com/*", "*://*.reuters.com/*"],
+        "js": ["content.js"]
+      }
+    ]
+  }
