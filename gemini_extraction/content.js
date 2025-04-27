@@ -12,17 +12,22 @@ function isFinancialArticle() {
   
   // Check if the article contains at least 3 financial keywords
   let keywordCount = 0;
+  let foundKeywords = [];
+  
   for (const keyword of financialKeywords) {
     if (articleText.toLowerCase().includes(keyword.toLowerCase())) {
       keywordCount++;
+      foundKeywords.push(keyword);
     }
   }
   
+  console.log(`Found ${keywordCount} financial keywords: ${foundKeywords.join(', ')}`);
   return keywordCount >= 3;
 }
 
 // Function to extract stocks from the page
 function extractStocksFromPage() {
+  console.log("Checking if page is a financial article...");
   if (!isFinancialArticle()) {
     console.log("Not a financial article, skipping analysis");
     return;
@@ -39,6 +44,11 @@ function extractStocksFromPage() {
     (response) => {
       if (response && response.success) {
         console.log("Extracted stocks:", response.data.tickers);
+        
+        // If stocks were found and we haven't already shown a notification
+        if (response.data.tickers && response.data.tickers.length > 0) {
+          showStockNotification(response.data.tickers.length);
+        }
       } else {
         console.error("Error extracting stocks:", response?.error);
       }
@@ -48,8 +58,14 @@ function extractStocksFromPage() {
 
 // Function to show a notification when stocks are found
 function showStockNotification(count) {
+  // Check if notification already exists
+  if (document.getElementById('stock-notification')) {
+    return;
+  }
+  
   // Create a floating notification
   const notification = document.createElement('div');
+  notification.id = 'stock-notification';
   notification.style.position = 'fixed';
   notification.style.bottom = '20px';
   notification.style.right = '20px';
@@ -68,8 +84,8 @@ function showStockNotification(count) {
       <span style="cursor: pointer;" id="stock-notification-close">&times;</span>
     </div>
     <div>
-      ${count} stocks mentioned in this article. 
-      <a href="#" id="stock-notification-view">View analysis</a>
+      ${count} stock${count !== 1 ? 's' : ''} mentioned in this article. 
+      <span style="color: #0066cc;">Click the extension icon in the toolbar to view the analysis.</span>
     </div>
   `;
   
@@ -81,29 +97,38 @@ function showStockNotification(count) {
     notification.remove();
   });
   
-  // Add event listener to open the popup
-  document.getElementById('stock-notification-view').addEventListener('click', (e) => {
-    e.preventDefault();
-    chrome.runtime.sendMessage({ action: "openPopup" });
-  });
-  
-  // Auto-remove the notification after 10 seconds
+  // Auto-remove the notification after 15 seconds
   setTimeout(() => {
     if (notification.parentNode) {
       notification.remove();
     }
-  }, 10000);
+  }, 15000);
 }
 
 // Listen for messages from the background script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "showNotification") {
     showStockNotification(request.count);
+  } else if (request.action === "forceExtraction") {
+    console.log("Force extraction requested");
+    // Get the HTML content of the page
+    const htmlContent = document.documentElement.outerHTML;
+    
+    // Send the HTML to the background script for processing
+    chrome.runtime.sendMessage(
+      { action: "extractStocks", html: htmlContent },
+      (response) => {
+        console.log("Force extraction response:", response);
+      }
+    );
   }
 });
 
 // Wait for the page to fully load before extracting stocks
 window.addEventListener('load', () => {
+  console.log("Page loaded, waiting briefly before analyzing...");
   // Wait a moment to ensure all content is rendered
   setTimeout(extractStocksFromPage, 1500);
 });
+
+console.log("Stock Trends Analyzer content script loaded");

@@ -1,5 +1,5 @@
 // Stock Trends Analyzer - Background Script
-const API_URL = "http://localhost:5000"; // Local development URL
+const API_URL = "http://127.0.0.1:8080"; // Local development URL
 let cachedData = null;
 
 // Listen for messages from content script or popup

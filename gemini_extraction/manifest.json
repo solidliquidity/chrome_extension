@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Sun271115",
+    "name": "Sun271937",
     "version": "1.0",
     "description": "Analyzes stock mentions in financial pages and shows price/Google Trends correlations",
     "permissions": ["activeTab", "storage", "scripting"],
@@ -20,6 +20,9 @@
       {
         "matches": ["*://*.hl.co.uk/*", "*://*.ft.com/*", "*://*.marketwatch.com/*", "*://*.reuters.com/*"],
         "js": ["content.js"]
-      }
-    ]
+      }  
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
   }
